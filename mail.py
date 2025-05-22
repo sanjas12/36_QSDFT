@@ -104,7 +104,7 @@ class QSDFT:
         """
         self.initialize_arrays()
         self.U_ext = self._calculate_external_potential(
-            self.z, self.rho_s, self.sigma_sf, self.eps_sf
+            self.z, self.rho_s, self.sigma_sf, self.eps_sf # type: ignore
         )
         
         self.pressures = np.logspace(*pressure_range, n_points)
@@ -119,7 +119,7 @@ class QSDFT:
             exponent = np.clip(exponent, -100, 100)
             rho_f = rho_bulk * np.exp(exponent)
             
-            N_ads: float = simpson(rho_f, self.z)  # molecules/m²
+            N_ads: float = simpson(rho_f, self.z)  # type: ignore # molecules/m²
             self.adsorption.append(N_ads / self.NA * 1e3)  # mmol/m²
             
     def save_results(self, filename: str = "data_out.csv") -> None:
@@ -130,7 +130,7 @@ class QSDFT:
             filename: Output file name
         """
         with open(filename, "w") as f:
-            for p, N_ads in zip(self.pressures, self.adsorption):
+            for p, N_ads in zip(self.pressures, self.adsorption): # type: ignore
                 f.write(f"{p:.4e} {N_ads:.4e}\n")
                 
     def plot_isotherm(self) -> None:
