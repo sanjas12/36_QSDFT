@@ -1,41 +1,94 @@
 # plot_test_data.py
 import pandas as pd
+import matplotlib.pyplot as plt
 
-# Чтение всего файла
+# Чтение и обработка данных (как в предыдущем коде)
 with open('data_in.csv', 'r') as f:
     lines = f.readlines()
 
-# Находим индексы начала таблиц
 table1_start = None
 table2_start = None
 for i, line in enumerate(lines):
     if "Table 1" in line:
-        table1_start = i + 1  # Следующая строка после заголовка
+        table1_start = i + 1
     elif "Table 2" in line:
-        table2_start = i + 1  # Следующая строка после заголовка
+        table2_start = i + 1
 
-# Читаем первую таблицу
+# Чтение данных в DataFrame
 df1 = pd.read_csv('data_in.csv', 
-                 skiprows=table1_start,  # type: ignore
-                 nrows=table2_start - table1_start - 2,  # -2 чтобы исключить пустую строку и заголовок Table 2 # type: ignore
+                 skiprows=table1_start, 
+                 nrows=table2_start - table1_start - 2,
                  sep='\t',
                  engine='python')
 
-# Читаем вторую таблицу
 df2 = pd.read_csv('data_in.csv', 
-                 skiprows=table2_start,  # type: ignore
+                 skiprows=table2_start, 
                  sep='\t',
                  engine='python')
 
-# Удаляем возможные NaN столбцы (если есть пустые столбцы из-за табуляции)
+# Очистка данных
 df1 = df1.dropna(axis=1, how='all')
 df2 = df2.dropna(axis=1, how='all')
 
-# Переименовываем столбцы (если нужно)
-df1.columns = ['Pore size(Å)', 'Filling pressre(P/P0)', 'Pore size(Å)_2', 'Filling pressre(P/P0)_2', 'Pore size(Å)_3', 'Filling pressre(P/P0)_3']
-df2.columns = ['Pore size(Å)', 'Filling pressre(P/P0)', 'Pore size(Å)_2', 'Filling pressre(P/P0)_2', 'Pore size(Å)_3', 'Filling pressre(P/P0)_3']
+# Присвоение имен столбцам
+columns = ['Pore_size', 'Pressure', 'Pore_size_2', 'Pressure_2', 'Pore_size_3', 'Pressure_3']
+df1.columns = columns
+df2.columns = columns
 
-print("DataFrame 1:")
-print(df1.head())
-print("\nDataFrame 2:")
-print(df2.head())
+# Создаем фигуру с несколькими графиками
+plt.figure(figsize=(15, 10))
+
+# График 1: Данные для азота (Table 1)
+plt.subplot(2, 2, 1)
+plt.plot(df1['Pore_size'], df1['Pressure'], 'b-', label='Set 1')
+plt.plot(df1['Pore_size_2'], df1['Pressure_2'], 'g-', label='Set 2')
+plt.plot(df1['Pore_size_3'], df1['Pressure_3'], 'r-', label='Set 3')
+plt.title('Nitrogen Adsorption at 77.4K')
+plt.xlabel('Pore size (Å)')
+plt.ylabel('Filling pressure (P/P0)')
+plt.yscale('log')
+plt.legend()
+plt.grid(True)
+
+# График 2: Данные для аргона (Table 2)
+plt.subplot(2, 2, 2)
+plt.plot(df2['Pore_size'], df2['Pressure'], 'b-', label='Set 1')
+plt.plot(df2['Pore_size_2'], df2['Pressure_2'], 'g-', label='Set 2')
+plt.plot(df2['Pore_size_3'], df2['Pressure_3'], 'r-', label='Set 3')
+plt.title('Argon Adsorption at 87.3K')
+plt.xlabel('Pore size (Å)')
+plt.ylabel('Filling pressure (P/P0)')
+plt.yscale('log')
+plt.legend()
+plt.grid(True)
+
+# График 3: Сравнение первых наборов данных
+plt.subplot(2, 2, 3)
+plt.plot(df1['Pore_size'], df1['Pressure'], 'b-', label='N2 at 77.4K')
+plt.plot(df2['Pore_size'], df2['Pressure'], 'r--', label='Ar at 87.3K')
+plt.title('Comparison of First Data Sets')
+plt.xlabel('Pore size (Å)')
+plt.ylabel('Filling pressure (P/P0)')
+plt.yscale('log')
+plt.legend()
+plt.grid(True)
+
+# График 4: Сравнение всех данных (усреднённое)
+plt.subplot(2, 2, 4)
+# Объединяем все данные по порам для каждого газа
+all_n2 = pd.concat([df1['Pore_size'], df1['Pore_size_2'], df1['Pore_size_3']])
+all_n2_pressure = pd.concat([df1['Pressure'], df1['Pressure_2'], df1['Pressure_3']])
+all_ar = pd.concat([df2['Pore_size'], df2['Pore_size_2'], df2['Pore_size_3']])
+all_ar_pressure = pd.concat([df2['Pressure'], df2['Pressure_2'], df2['Pressure_3']])
+
+plt.scatter(all_n2, all_n2_pressure, c='blue', s=10, alpha=0.5, label='N2 at 77.4K')
+plt.scatter(all_ar, all_ar_pressure, c='red', s=10, alpha=0.5, label='Ar at 87.3K')
+plt.title('All Data Comparison')
+plt.xlabel('Pore size (Å)')
+plt.ylabel('Filling pressure (P/P0)')
+plt.yscale('log')
+plt.legend()
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
