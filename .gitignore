@@ -52,6 +52,6 @@ __pycache__
 *.pyc
 
 #### Project ####
-DATA_out
+data_out*
 logs*
 build*
