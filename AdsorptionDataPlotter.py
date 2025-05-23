@@ -81,7 +81,45 @@ class AdsorptionDataPlotter:
         
         plt.tight_layout()
         plt.show()
+
+    def get_all_data(self) -> pd.DataFrame:
+        """
+        Returns a combined DataFrame of all data with gas type labels.
         
+        Returns:
+            pd.DataFrame: Combined data with columns:
+                         - 'Pore_size': Pore size values
+                         - 'Pressure': Pressure values
+                         - 'Gas_type': 'Nitrogen' or 'Argon'
+                         - 'Dataset': Original dataset number (1, 2, or 3)
+        """
+        if self.df1 is None or self.df2 is None:
+            self.load_data()
+            
+        # Process Nitrogen data (df1)
+        n2_data = []
+        for i, suffix in enumerate(['', '_2', '_3'], 1):
+            n2_data.append(pd.DataFrame({
+                'Pore_size': self.df1[f'Pore_size{suffix}'], # type: ignore
+                'Pressure': self.df1[f'Pressure{suffix}'], # type: ignore
+                'Gas_type': 'Nitrogen',
+                'Dataset': i
+            }))
+        
+        # Process Argon data (df2)
+        ar_data = []
+        for i, suffix in enumerate(['', '_2', '_3'], 1):
+            ar_data.append(pd.DataFrame({
+                'Pore_size': self.df2[f'Pore_size{suffix}'],  # type: ignore
+                'Pressure': self.df2[f'Pressure{suffix}'], # type: ignore
+                'Gas_type': 'Argon',
+                'Dataset': i
+            }))
+            
+        # Combine all data
+        combined_df = pd.concat(n2_data + ar_data, ignore_index=True)
+        return combined_df.dropna()
+
     def _plot_single_gas(self, subplot_num, df, title):
         """
         Helper method to plot data for a single gas.
@@ -137,4 +175,5 @@ class AdsorptionDataPlotter:
 # Example usage:
 if __name__ == "__main__":
     plotter = AdsorptionDataPlotter('data_in.csv')
+    print(plotter.get_all_data())
     plotter.plot_all()
