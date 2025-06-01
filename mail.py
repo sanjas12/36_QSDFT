@@ -1,4 +1,3 @@
-# mail.py
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -97,9 +96,7 @@ class QSDFT:
 
         return profile
 
-    def _calculate_external_potential(
-        self, z: np.ndarray, rho_s: np.ndarray
-    ) -> np.ndarray:
+    def _calculate_external_potential(self, z: np.ndarray, rho_s: np.ndarray) -> np.ndarray:
         """
         Calculate Lennard-Jones potential for gas-solid interaction.
 
@@ -127,7 +124,6 @@ class QSDFT:
             sigma_r = self.sigma_sf / r_valid
             lj = 4 * self.eps_sf * (sigma_r**12 - sigma_r**6)
             u[i] = simpson(lj * rho_valid, z[mask])
-
         return u
 
     def calculate_adsorption_isotherm(self) -> None:
@@ -167,13 +163,13 @@ class QSDFT:
                 "No adsorption data to save. Run calculate_adsorption_isotherm() first."
             )
 
-        data = np.column_stack((self.pressures, self.adsorption))
+        data = np.column_stack((self.pressures, self.rho_s, self.adsorption))
         try:
             with open(filename, "w", encoding="utf-8") as f:
                 np.savetxt(
                     f,
                     data,
-                    header="Pressure [P/P0], Adsorption [mmol/m2]",  # Removed ² character
+                    header="Pressure [P/P0], solid density profile, Adsorption [mmol/m2]",  # Removed ² character
                     fmt="%.4e",
                     delimiter=",",
                 )
