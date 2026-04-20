@@ -1,8 +1,9 @@
-import numpy as np
+from typing import Any, List
+
 import matplotlib.pyplot as plt
-import pandas as pd
+import numpy as np
 from scipy.integrate import simpson
-from typing import Tuple, List, Optional, Dict, Any
+
 from AdsorptionDataPlotter import AdsorptionDataPlotter
 
 
@@ -55,7 +56,7 @@ class QSDFT:
         self.z: np.ndarray = np.array([])
         self.rho_s: np.ndarray = np.array([])
         self.U_ext: np.ndarray = np.array([])
-        self.adsorption: List[float] = []
+        self.adsorption: list[float] = []
 
         # Load experimental data
         self._load_experimental_data()
@@ -176,7 +177,7 @@ class QSDFT:
         except IOError as e:
             raise IOError(f"Failed to save results: {str(e)}")
 
-    def plot_isotherm(self, **kwargs: Any) -> plt.Figure:  # type: ignore
+    def plot_isotherm(self, **kwargs: Any) -> plt.Figure:
         """
         Plot calculated adsorption isotherm.
 
