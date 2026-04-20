@@ -1,0 +1,77 @@
+[project]
+name = "tg-naladka"
+dynamic = ["version"]
+description = "Программа для визуализации(matplotlib) и анализа данных"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [
+    {name = "sanja_s", email = "sanja100v@gmail.com"}
+]
+
+dependencies = [
+    "chardet>=5.1.0",
+    "contourpy>=1.0.7",
+    "cx-freeze>=6.15.6",
+    "cycler>=0.11.0",
+    "fonttools>=4.38.0",
+    "kiwisolver>=1.4.4",
+    "matplotlib>=3.6.3",
+    "numpy>=1.24.1",
+    "packaging>=23.0",
+    "pandas>=1.5.3",
+    "pillow>=9.4.0",
+    "py-cpuinfo>=9.0.0",
+    "pyparsing>=3.0.9",
+    "pyqt5>=5.15.8",
+    "pyqt5-qt5>=5.15.2",
+    "pyqt5-sip>=12.11.1",
+    "python-dateutil>=2.8.2",
+    "pytz>=2022.7.1",
+    "pywin32>=305",
+    "scipy>=1.9.0",
+    "setuptools>=67.1.0",
+    "six>=1.16.0",
+]
+
+[project.urls]
+Repository = "https://github.com/sanjas12/36_QSDFT.git"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# [dependency-groups]
+# build = [
+#     "cx-freeze==7.2.10 ; sys_platform == 'win32'",
+# ]
+
+[tool.uv]
+environments = [
+    "sys_platform == 'win32'",
+    # "sys_platform == 'linux'",  # раскоментить если будет в linux собираться
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# ─── Ruff: линтер + форматер ─────────────────────────────────────────────────
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "UP",
+    "B",
+    "N",
+    "SIM",  
+]
+ignore = ["E501"] 
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
